@@ -1,0 +1,22 @@
+# Project-scoped Codex configuration.
+# Keep this file conservative: persistent product/architecture rules belong in AGENTS.md.
+
+[agents]
+max_threads = 4
+max_depth = 1
+
+[agents.explorer]
+description = "Read-only explorer that maps the relevant code path before implementation."
+config_file = "agents/explorer.toml"
+
+[agents.backend_engineer]
+description = "Implementation agent focused on the ASP.NET Core/.NET backend."
+config_file = "agents/backend-engineer.toml"
+
+[agents.frontend_engineer]
+description = "Implementation agent focused on the Next.js/TypeScript frontend."
+config_file = "agents/frontend-engineer.toml"
+
+[agents.reviewer]
+description = "Read-only reviewer focused on correctness, security, regressions and missing tests."
+config_file = "agents/reviewer.toml"
