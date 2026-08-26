@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/FindMyPrompter.Api/FindMyPrompter.Api.csproj" />
+    <Project Path="src/FindMyPrompter.Application/FindMyPrompter.Application.csproj" />
+    <Project Path="src/FindMyPrompter.Domain/FindMyPrompter.Domain.csproj" />
+    <Project Path="src/FindMyPrompter.Infrastructure/FindMyPrompter.Infrastructure.csproj" />
+  </Folder>
+</Solution>
