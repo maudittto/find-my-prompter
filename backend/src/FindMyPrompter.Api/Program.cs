@@ -13,6 +13,7 @@ var connectionString =
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
+builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddAuthorization();
 
@@ -29,30 +30,16 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+// Em desenvolvimento o front chama a API pelo proxy do Next (http).
+// Redirecionar para https aqui jogaria o browser para outra origem => erro de CORS.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
+app.MapControllers();
 
 app.MapGroup("/api/auth")
     .MapIdentityApi<ApplicationUser>();
-
-app.MapGet("/api/health", async (AppDbContext dbContext) =>
-{
-    var databaseAvailable = await dbContext.Database.CanConnectAsync();
-
-    return Results.Ok(new
-    {
-        status = databaseAvailable ? "healthy" : "unhealthy",
-        database = databaseAvailable ? "connected" : "disconnected"
-    });
-});
-
-app.MapGet("/api/me", (HttpContext context) =>
-{
-    return Results.Ok(new
-    {
-        authenticated = context.User.Identity?.IsAuthenticated,
-        name = context.User.Identity?.Name
-    });
-})
-.RequireAuthorization();
 
 app.Run();
