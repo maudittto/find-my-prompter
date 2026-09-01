@@ -1,5 +1,7 @@
 # Find My Prompter — Arquitetura
 
+Para regras práticas de organização de arquivos, responsabilidades e vertical slices no backend e no frontend, consulte [`PROJECT_STRUCTURE.md`](PROJECT_STRUCTURE.md).
+
 ## Estratégia
 O sistema começa como um monólito modular. Não adotar microserviços antes de existir necessidade operacional comprovada.
 
