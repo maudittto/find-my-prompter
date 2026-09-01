@@ -1,7 +1,15 @@
+using System.Text.Json.Serialization;
+using FindMyPrompter.Api.Filters;
+using FindMyPrompter.Application.Messages;
+using FindMyPrompter.Application.Professionals;
+using FindMyPrompter.Application.Professionals.GetProfile;
+using FindMyPrompter.Application.Professionals.SaveProfile;
 using FindMyPrompter.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using FindMyPrompter.Infrastructure.Identity;
+using FindMyPrompter.Infrastructure.Professionals;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +21,34 @@ var connectionString =
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-builder.Services.AddControllers();
+// Enums trafegam como texto ("Senior") em vez de índice numérico.
+builder.Services
+    .AddControllers(options => options.Filters.Add<ValidationActionFilter>())
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
+// Erro de model binding sai no mesmo formato do ValidationActionFilter.
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+    options.InvalidModelStateResponseFactory = context =>
+    {
+        var errors = context.ModelState
+            .Where(entry => entry.Value?.Errors.Count > 0)
+            .SelectMany(entry => entry.Value!.Errors.Select(error =>
+                new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["propertyName"] = entry.Key,
+                    ["errorMessage"] = error.ErrorMessage
+                }))
+            .ToList<object?>();
+
+        return new BadRequestObjectResult(new ProblemDetails
+        {
+            Status = StatusCodes.Status400BadRequest,
+            Title = Messages.Validation.OneOrMoreErrorsOccurred,
+            Type = "about:blank",
+            Extensions = { ["errors"] = errors }
+        });
+    });
 builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
 builder.Services.AddAuthorization();
@@ -22,6 +57,10 @@ builder.Services
     .AddIdentityApiEndpoints<ApplicationUser>()
     .AddRoles<IdentityRole<Guid>>()
     .AddEntityFrameworkStores<AppDbContext>();
+
+builder.Services.AddScoped<IProfileStore, ProfileStore>();
+builder.Services.AddScoped<SaveProfileHandler>();
+builder.Services.AddScoped<GetProfileHandler>();
 
 var app = builder.Build();
 
