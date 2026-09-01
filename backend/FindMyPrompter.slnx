@@ -5,4 +5,7 @@
     <Project Path="src/FindMyPrompter.Domain/FindMyPrompter.Domain.csproj" />
     <Project Path="src/FindMyPrompter.Infrastructure/FindMyPrompter.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/FindMyPrompter.Api.IntegrationTests/FindMyPrompter.Api.IntegrationTests.csproj" />
+  </Folder>
 </Solution>
