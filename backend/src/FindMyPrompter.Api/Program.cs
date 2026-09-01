@@ -14,6 +14,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 builder.Services.AddControllers();
+builder.Services.AddProblemDetails();
 builder.Services.AddOpenApi();
 builder.Services.AddAuthorization();
 
@@ -23,6 +24,9 @@ builder.Services
     .AddEntityFrameworkStores<AppDbContext>();
 
 var app = builder.Build();
+
+// Exceções não tratadas viram ProblemDetails em vez de vazar stack trace.
+app.UseExceptionHandler();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -43,3 +47,5 @@ app.MapGroup("/api/auth")
     .MapIdentityApi<ApplicationUser>();
 
 app.Run();
+
+public partial class Program;
