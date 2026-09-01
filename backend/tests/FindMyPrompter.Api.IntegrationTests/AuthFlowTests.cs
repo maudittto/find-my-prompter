@@ -3,7 +3,8 @@ using System.Net.Http.Json;
 
 namespace FindMyPrompter.Api.IntegrationTests;
 
-public class AuthFlowTests(ApiFactory factory) : IClassFixture<ApiFactory>
+[Collection(ApiCollection.Name)]
+public class AuthFlowTests(ApiFactory factory)
 {
     private sealed record MeResponse(bool Authenticated, string? Name);
 

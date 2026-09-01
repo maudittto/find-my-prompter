@@ -6,6 +6,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace FindMyPrompter.Api.IntegrationTests;
 
+// Todas as classes de teste compartilham a mesma instância: o banco é recriado
+// uma vez por execução e nenhuma delas o derruba enquanto outra o usa.
+[CollectionDefinition(Name)]
+public sealed class ApiCollection : ICollectionFixture<ApiFactory>
+{
+    public const string Name = "api";
+}
+
 // Usa o Postgres do docker-compose em um banco separado dos dados de desenvolvimento.
 public class ApiFactory : WebApplicationFactory<Program>
 {
